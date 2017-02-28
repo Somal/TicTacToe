@@ -160,7 +160,7 @@ class Agent(object):
                 agent = Agent(game)
                 U = []
                 for line in agent.lines:
-                    u_i = line.utility(gamer_index)
+                    u_i = line.utility(game.enemy(gamer_index))
                     U.append(u_i)
                 root_node.utility = U
 
@@ -173,10 +173,10 @@ class Agent(object):
                     try:
                         node.game.put(i, j, gamer_index)
 
-                        # node.game.field.show()
+                        node.game.field.show()
                         node.move = (i, j)
-                        go_to_depth(max_depth - 1, node, gamer_index)  # Change index to enemy
-                        # print(sum(node.utility)/len(node.utility))
+                        go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
+                        print(sum(node.utility)/len(node.utility))
                         node = root_node.add_child(root_node.game.copy())
                     except Exception as e:
                         # print(e)
@@ -218,9 +218,9 @@ if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f, show_everytime=False)
     agent = Agent(game=g)
-    g.put(2, 2, 1)
-    g.put(2, 0, 2)
-    g.put(0, 0, 1)
-    g.put(0, 2, 2)
+    # g.put(2, 2, 1)
+    # g.put(2, 0, 2)
+    # g.put(0, 0, 1)
+    # g.put(0, 2, 2)
     g.field.show()
-    print(agent.create_move_minimax(1, max_depth=1))
+    print(agent.create_move_minimax(1, max_depth=3))
