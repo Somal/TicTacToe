@@ -152,7 +152,7 @@ class Agent(object):
                 result_point = point
         return max_result, result_point
 
-    def create_move_minimax(self, gamer_index, comparison_func, max_depth=6):
+    def create_move_minimax(self, gamer_index, max_depth=6):
         def go_to_depth(max_depth, root_node, gamer_index):
             if max_depth == 0:
                 game = root_node.game
@@ -164,15 +164,15 @@ class Agent(object):
                 root_node.utility = U
 
                 update_parents(root_node)
+                return None
 
             node = root_node.add_child(root_node.game.copy())
-            depth = root_node.depth + 1
             for i in range(root_node.game.field.get_size()[0]):
                 for j in range(root_node.game.field.get_size()[1]):
                     try:
                         node.game.put(i, j, gamer_index)
                         node.move = (i, j)
-                        go_to_depth(max_depth - 1, node, self.game.enemy(gamer_index))
+                        go_to_depth(max_depth - 1, node, gamer_index)  # Change to enemy
                         node = root_node.add_child(root_node.game.copy())
                     except:
                         pass
@@ -208,10 +208,11 @@ if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f)
     agent = Agent(game=g)
-    g.put(2, 0, 1)
-    g.put(2, 1, 2)
-    g.put(1, 1, 1)
-    g.put(0, 2, 2)
+    # g.put(2, 0, 1)
+    # g.put(2, 1, 2)
+    # g.put(1, 1, 1)
+    # g.put(0, 2, 2)
+    g.field.show()
     # for line in agent.linker[(0, 1)]:
     #     print(str(line), line.get_statistics(), line.utility(1))
-    print(agent.create_move_minimax(2, agent.default_comparison_vectors_func, max_depth=1))
+    print(agent.create_move_minimax(1, max_depth=1))
