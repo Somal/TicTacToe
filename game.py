@@ -111,6 +111,9 @@ class Game(object):
         if self.show_everytime:
             self.field.show()
 
+    def copy(self):
+        return copy.deepcopy(self)
+
 
 if __name__ == "__main__":
     f = Field2D((3, 3))
