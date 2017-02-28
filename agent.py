@@ -1,9 +1,9 @@
 from game import *
 
 
-class FieldNode(object):
-    def __init__(self, field, parent=None):
-        self.field = field
+class GameNode(object):
+    def __init__(self, game, parent=None):
+        self.game = game
         self.parent = parent
         self.children = []
         self.max_utility = 0
@@ -14,14 +14,14 @@ class FieldNode(object):
 
 
 class Tree(object):
-    def __init__(self, root_field):
-        self.root = FieldNode(field=root_field)
+    def __init__(self, root_node):
+        self.root = GameNode(game=root_node)
 
     def get_root(self):
         return self.root
 
-    def add_node(self, parent, node_field):
-        node = FieldNode(field=node_field, parent=parent)
+    def add_node(self, parent, node_game):
+        node = GameNode(game=node_game, parent=parent)
         parent.add_child(node)
         return node
 
@@ -163,17 +163,28 @@ class Agent(object):
         return max_result, result_point
 
     def create_move_minimax(self, gamer_index, comparison_func, depth=6):
+        def go_to_depth(max_depth, root_node):
+            for
+
         tree = Tree(self.game.copy())
+        root = tree.get_root()
+        # result, point = self.create_move_locally(gamer_index, comparison_func)
+        # root.max_utility = result
+        # root.next_move = point
+
+        # Go to depth
+
+        return root.max_utility, root.next_move
 
 
 if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f)
     agent = Agent(game=g)
-    g.put(0, 0, 1)
-    g.put(1, 2, 2)
-    g.put(2, 1, 1)
-    # g.put(0, 2, 2)
+    g.put(2, 0, 1)
+    g.put(2, 1, 2)
+    g.put(1, 1, 1)
+    g.put(0, 2, 2)
     # for line in agent.linker[(0, 1)]:
     #     print(str(line), line.get_statistics(), line.utility(1))
-    print(agent.create_move_locally(2, agent.default_comparison_vectors_func))
+    print(agent.create_move_minimax(2, agent.default_comparison_vectors_func))
