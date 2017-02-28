@@ -119,6 +119,7 @@ class Agent(object):
         lines.append(line)
         return lines
 
+    # Not use
     def create_move_locally(self, gamer_index, comparison_func):
         prev_showing = self.game.show_everytime
         self.game.show_everytime = False
@@ -171,23 +172,32 @@ class Agent(object):
                 for j in range(root_node.game.field.get_size()[1]):
                     try:
                         node.game.put(i, j, gamer_index)
+
+                        # node.game.field.show()
                         node.move = (i, j)
-                        go_to_depth(max_depth - 1, node, gamer_index)  # Change to enemy
+                        go_to_depth(max_depth - 1, node, gamer_index)  # Change index to enemy
+                        # print(sum(node.utility)/len(node.utility))
                         node = root_node.add_child(root_node.game.copy())
-                    except:
+                    except Exception as e:
+                        # print(e)
                         pass
 
         def update_parents(node):
             if node is not None:
-                func = lambda x: x.__ge__ if node.depth % 2 == 0 else lambda x: x.__le__
+                def func(x, y):
+                    nx = sum(x) / len(x) if max(x) < 1.0 else 1
+                    ny = sum(y) / len(y) if max(y) < 1.0 else 1
+                    return nx > ny if node.depth % 2 == 0 else nx < ny
+
                 for child in node.children:
                     if child.utility is not None:
                         if node.utility is None:
                             node.utility = child.utility
-                        else:
-                            if func(node.utility, child.utility):
-                                node.utility = child.utility
-                                node.move = child.move
+                            node.move = child.move
+
+                        if func(child.utility, node.utility):
+                            node.utility = child.utility
+                            node.move = child.move
 
                 if node.parent is not None:
                     update_parents(node.parent)
@@ -206,13 +216,14 @@ class Agent(object):
 
 if __name__ == '__main__':
     f = Field2D((3, 3))
-    g = Game(field=f)
+    g = Game(field=f, show_everytime=False)
     agent = Agent(game=g)
-    # g.put(2, 0, 1)
-    # g.put(2, 1, 2)
-    # g.put(1, 1, 1)
-    # g.put(0, 2, 2)
+    g.put(2, 2, 1)
+    g.put(2, 0, 2)
+    g.put(0, 0, 1)
+    g.put(0, 2, 2)
     g.field.show()
     # for line in agent.linker[(0, 1)]:
     #     print(str(line), line.get_statistics(), line.utility(1))
+    print(agent.create_move_locally(1, comparison_func=agent.default_comparison_vectors_func))
     print(agent.create_move_minimax(1, max_depth=1))
