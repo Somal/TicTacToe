@@ -6,8 +6,20 @@ class Line(object):
         self.coords = coords_2d
         self.field = Field2D
 
-    def utility(self):
-        return 0
+    def get_statistics(self):
+        """
+        :return: dict with count of distinct gamer's moves, i.e. {0: 2, 1: 1, 2: 0}
+        :rtype: dict
+        """
+        stats = {}
+        for points_type_index in range(len(self.field.get_points())):
+            stats[points_type_index] = 0
+
+        for point in self.coords:
+            value = self.field.get(point)
+            stats[value] += 1
+
+        return stats
 
     def show(self):
         print(self.coords[0], self.coords[-1])
