@@ -80,6 +80,10 @@ class Field2D(object):
 
         return False
 
+    def move_back(self, point):
+        i, j = point
+        self.field[i][j] = 0
+
 
 class Game(object):
     def __init__(self, field: Field2D, show_everytime=True):
