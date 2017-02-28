@@ -41,6 +41,11 @@ class Field2D(object):
         return x >= 0 and y >= 0 and x < self.size[0] and y < self.size[1]
 
     def check_field(self):
+        """
+        Not WORKS!!
+        :return:
+        """
+        # TODO: Change criterion of win (not sum)!!
         for i in range(self.get_size()[0]):
             points_sum = sum(self.field[i])
             if points_sum == (points_sum // self.get_size()[0]) * self.get_size()[0] and points_sum > 0:
@@ -88,8 +93,8 @@ class Game(object):
             return 0
 
         self.field.put((x, y), gamer_index=gamer_index)
-        if self.field.check_field():
-            print("{} wins".format(self.field.get_points()[gamer_index]))
+        # if self.field.check_field():
+        #     print("{} wins".format(self.field.get_points()[gamer_index]))
         if self.show_everytime:
             self.field.show()
 

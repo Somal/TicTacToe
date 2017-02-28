@@ -21,6 +21,22 @@ class Line(object):
 
         return stats
 
+    def utility(self, gamer_index):
+        stats = self.get_statistics()
+        enemy_index = 1
+        for i in range(len(self.field.get_points())):
+            if i > 0 and i != gamer_index:
+                enemy_index = i
+
+        result = 0
+        gamer_move_count = stats[gamer_index]
+        enemy_move_count = stats[enemy_index]
+        if gamer_move_count == 0 and enemy_move_count > 0:
+            result = -enemy_move_count / len(self.coords)
+        if gamer_move_count > 0 and enemy_move_count == 0:
+            result = gamer_move_count / len(self.coords)
+        return result
+
     def show(self):
         print(self.coords[0], self.coords[-1])
 
@@ -94,5 +110,6 @@ if __name__ == '__main__':
     g = Game(field=f)
     agent = Agent(game=g)
     g.put(1, 1, 1)
+    g.put(0, 0, 2)
     for line in agent.linker[(1, 1)]:
-        print(str(line), line.get_statistics())
+        print(str(line), line.get_statistics(), line.utility(1))
