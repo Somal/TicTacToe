@@ -2,8 +2,12 @@ from game import *
 
 
 class Line(object):
-    def __init__(self, coords_2d):
+    def __init__(self, coords_2d, field_2d):
         self.coords = coords_2d
+        self.field = Field2D
+
+    def utility(self):
+        return 0
 
     def show(self):
         print(self.coords[0], self.coords[-1])
@@ -25,7 +29,7 @@ class Agent(object):
     def __init_linker(self):
         lines_coord = self.line_coord_generation()
         for line_coord in lines_coord:
-            line = Line(line_coord)
+            line = Line(line_coord, field_2d=self.game.field)
             for point in line_coord:
                 self.linker[point].append(line)
 
