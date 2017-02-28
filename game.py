@@ -92,7 +92,7 @@ class Game(object):
             print('The game is finished')
             return 0
 
-        if self.field.get((x, y)) == 0:
+        if self.field.get((x, y)) != 0:
             raise ValueError('This point is not empty')
 
         self.field.put((x, y), gamer_index=gamer_index)
