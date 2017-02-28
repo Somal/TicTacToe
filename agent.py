@@ -48,6 +48,7 @@ class Agent(object):
     def __init__(self, game: Game):
         self.game = game
         self.linker = {}  # 2d field  {point: list(Line)}
+        self.lines = set([])  # Store all distinct lines
         for i in range(self.game.field.get_size()[0]):
             for j in range(self.game.field.get_size()[1]):
                 self.linker[(i, j)] = []
@@ -58,6 +59,7 @@ class Agent(object):
         lines_coord = self.line_coord_generation()
         for line_coord in lines_coord:
             line = Line(line_coord, field_2d=self.game.field)
+            self.lines.add(line)
             for point in line_coord:
                 self.linker[point].append(line)
 
@@ -111,5 +113,11 @@ if __name__ == '__main__':
     agent = Agent(game=g)
     g.put(1, 1, 1)
     g.put(0, 0, 2)
-    for line in agent.linker[(1, 1)]:
+    g.put(2, 0, 1)
+    g.put(0, 2, 2)
+    for line in agent.linker[(0, 1)]:
         print(str(line), line.get_statistics(), line.utility(1))
+
+    for i in range(g.field.get_size()[0]):
+        for j in range(g.field.get_size()[1]):
+            pass
