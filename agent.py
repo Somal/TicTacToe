@@ -12,17 +12,9 @@ class GameNode(object):
     def add_child(self, child):
         self.children.append(child)
 
-
-class Tree(object):
-    def __init__(self, root_node):
-        self.root = GameNode(game=root_node)
-
-    def get_root(self):
-        return self.root
-
-    def add_node(self, parent, node_game):
-        node = GameNode(game=node_game, parent=parent)
-        parent.add_child(node)
+    def add_node(self, node_game):
+        node = GameNode(game=node_game, parent=self)
+        self.children.append(node)
         return node
 
 
@@ -164,7 +156,9 @@ class Agent(object):
 
     def create_move_minimax(self, gamer_index, comparison_func, depth=6):
         def go_to_depth(max_depth, root_node):
-            for
+            node =
+            for i in root_node.game.field.get_size()[0]:
+                for j in root_node.game.field.get_size()[1]:
 
         tree = Tree(self.game.copy())
         root = tree.get_root()
