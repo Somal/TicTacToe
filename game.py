@@ -1,3 +1,6 @@
+import copy
+
+
 class Field2D(object):
     def __init__(self, size, points=('_', 'X', 'O')):
         self.size = size
@@ -83,6 +86,9 @@ class Field2D(object):
     def move_back(self, point):
         i, j = point
         self.field[i][j] = 0
+
+    def copy(self):
+        return copy.deepcopy(self)
 
 
 class Game(object):
