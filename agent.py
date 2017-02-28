@@ -20,6 +20,9 @@ class Agent(object):
             for j in range(self.game.field.get_size()[1]):
                 self.linker[(i, j)] = []
 
+        self.__init_linker()
+
+    def __init_linker(self):
         lines_coord = self.line_coord_generation()
         for line_coord in lines_coord:
             line = Line(line_coord)
