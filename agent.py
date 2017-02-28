@@ -6,6 +6,8 @@ class FieldNode(object):
         self.field = field
         self.parent = parent
         self.children = []
+        self.max_utility = 0
+        self.next_move = None
 
     def add_child(self, child):
         self.children.append(child)
@@ -161,7 +163,7 @@ class Agent(object):
         return max_result, result_point
 
     def create_move_minimax(self, gamer_index, comparison_func, depth=6):
-        pass
+        tree = Tree(self.game.copy())
 
 
 if __name__ == '__main__':
