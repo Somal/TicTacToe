@@ -8,6 +8,7 @@ class GameNode(object):
         self.children = []
         self.max_utility = 0
         self.next_move = None
+        self.depth = 0 if parent is None else parent.depth + 1
 
     def add_child(self, game):
         node = GameNode(game=game, parent=self)
@@ -152,10 +153,19 @@ class Agent(object):
         return max_result, result_point
 
     def create_move_minimax(self, gamer_index, comparison_func, depth=6):
-        def go_to_depth(max_depth, root_node):
-            node = root_node.add_
+        def go_to_depth(max_depth, root_node, gamer_index):
+            if max_depth == 0:
+                self.game = root_node.game
+                return self.create_move_locally(gamer_index, comparison_func)
+
+            node = root_node.add_child(root_node.game.copy())
             for i in root_node.game.field.get_size()[0]:
                 for j in root_node.game.field.get_size()[1]:
+                    try:
+                        node.game.put(i, j, gamer_index)
+
+                    except:
+                        pass
 
         root = GameNode(self.game.copy())
         # result, point = self.create_move_locally(gamer_index, comparison_func)
@@ -163,6 +173,7 @@ class Agent(object):
         # root.next_move = point
 
         # Go to depth
+        go_to_depth(depth, root, gamer_index)
 
         return root.max_utility, root.next_move
 
@@ -177,4 +188,4 @@ if __name__ == '__main__':
     g.put(0, 2, 2)
     # for line in agent.linker[(0, 1)]:
     #     print(str(line), line.get_statistics(), line.utility(1))
-    print(agent.create_move_minimax(2, agent.default_comparison_vectors_func))
+    print(agent.create_move_minimax(2, agent.default_comparison_vectors_func, depth=1))
