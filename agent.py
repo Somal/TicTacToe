@@ -223,7 +223,4 @@ if __name__ == '__main__':
     g.put(0, 0, 1)
     g.put(0, 2, 2)
     g.field.show()
-    # for line in agent.linker[(0, 1)]:
-    #     print(str(line), line.get_statistics(), line.utility(1))
-    print(agent.create_move_locally(1, comparison_func=agent.default_comparison_vectors_func))
     print(agent.create_move_minimax(1, max_depth=1))
