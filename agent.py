@@ -2,30 +2,38 @@ from game import *
 
 
 class Line(object):
-    def __init__(self, coordinates_2d, field_2d, linker):
-        self.coords = coordinates_2d
-        self.line = []
-        for i, x, y in enumerate(self.coords):
-            pass
+    def __init__(self, coords_2d):
+        self.coords = coords_2d
 
     def show(self):
         print(self.coords[0], self.coords[-1])
+
+    def __str__(self):
+        return "| {}, {} |".format(self.coords[0], self.coords[-1])
 
 
 class Agent(object):
     def __init__(self, game: Game):
         self.game = game
-        self.linker = []  # 2d field
+        self.linker = {}  # 2d field  {point: list(Line)}
         for i in range(self.game.field.get_size()[0]):
-            tmp = []
             for j in range(self.game.field.get_size()[1]):
-                tmp.append(None)
-            self.linker.append(tmp)
+                self.linker[(i, j)] = []
 
-        lines = self.line_generation()
-        # TODO: create linkers
+        lines_coord = self.line_coord_generation()
+        for line_coord in lines_coord:
+            line = Line(line_coord)
+            for point in line_coord:
+                self.linker[point].append(line)
 
-    def line_generation(self):
+        for i in range(self.game.field.get_size()[0]):
+            for j in range(self.game.field.get_size()[1]):
+                lines = []
+                for line in self.linker[(i, j)]:
+                    lines.append(str(line))
+                print(i, j, lines)
+
+    def line_coord_generation(self):
         lines = []
         for i in range(self.game.field.get_size()[0]):
             line = []
