@@ -116,7 +116,7 @@ class Agent(object):
                     g.put(i, j, gamer_index)
                     U = []
                     for line in agent.lines:
-                        u_i = line.utility(1)
+                        u_i = line.utility(gamer_index)
                         U.append(u_i)
                     utilities[(i, j)] = U
                     g.field.move_back((i, j))
@@ -142,10 +142,10 @@ if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f)
     agent = Agent(game=g)
-    g.put(1, 1, 1)
-    g.put(2, 1, 2)
-    g.put(2, 0, 1)
-    g.put(0, 2, 2)
+    g.put(0, 0, 1)
+    g.put(1, 1, 2)
+    g.put(2, 1, 1)
+    # g.put(0, 2, 2)
     # for line in agent.linker[(0, 1)]:
     #     print(str(line), line.get_statistics(), line.utility(1))
-    print(agent.create_move(1, agent.default_comparison_vectors_func))
+    print(agent.create_move(2, agent.default_comparison_vectors_func))
