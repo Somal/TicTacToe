@@ -2,9 +2,10 @@ from game import *
 
 
 class Line(object):
-    def __init__(self, coords_2d, field_2d):
+    def __init__(self, coords_2d, field_2d, weight=1):
         self.coords = coords_2d
         self.field = field_2d
+        self.weight = weight
 
     def get_statistics(self):
         """
@@ -35,7 +36,7 @@ class Line(object):
             result = -enemy_move_count / len(self.coords)
         if gamer_move_count > 0 and enemy_move_count == 0:
             result = gamer_move_count / len(self.coords)
-        return result
+        return result * self.weight
 
     def show(self):
         print(self.coords[0], self.coords[-1])
@@ -103,8 +104,38 @@ class Agent(object):
         lines.append(line)
         return lines
 
-    def create_move(self):
-        pass
+    def create_move(self, gamer_index, comparison_func):
+        prev_showing = self.game.show_everytime
+        self.game.show_everytime = False
+
+        utilities = {}
+        for i in range(self.game.field.get_size()[0]):
+            for j in range(self.game.field.get_size()[1]):
+                # Try to put point to somewhere
+                try:
+                    g.put(i, j, gamer_index)
+                    U = []
+                    for line in agent.lines:
+                        u_i = line.utility(1)
+                        U.append(u_i)
+                    utilities[(i, j)] = U
+                    g.field.move_back((i, j))
+                except:
+                    pass
+
+        self.game.show_everytime = prev_showing
+        result, point = comparison_func(utilities)
+        return result, point
+
+    def default_comparison_vectors_func(self, utilities):
+        max_result = 0
+        result_point = None
+        for point, utility_vector in utilities.items():
+            avg = sum(utility_vector) / len(utility_vector)
+            if avg > max_result:
+                max_result = avg
+                result_point = point
+        return max_result, result_point
 
 
 if __name__ == '__main__':
@@ -112,12 +143,9 @@ if __name__ == '__main__':
     g = Game(field=f)
     agent = Agent(game=g)
     g.put(1, 1, 1)
-    g.put(0, 0, 2)
+    g.put(2, 1, 2)
     g.put(2, 0, 1)
     g.put(0, 2, 2)
-    for line in agent.linker[(0, 1)]:
-        print(str(line), line.get_statistics(), line.utility(1))
-
-    for i in range(g.field.get_size()[0]):
-        for j in range(g.field.get_size()[1]):
-            pass
+    # for line in agent.linker[(0, 1)]:
+    #     print(str(line), line.get_statistics(), line.utility(1))
+    print(agent.create_move(1, agent.default_comparison_vectors_func))
