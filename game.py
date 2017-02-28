@@ -114,6 +114,14 @@ class Game(object):
     def copy(self):
         return copy.deepcopy(self)
 
+    def enemy(self, gamer_index):
+        enemy_index = 1
+        for i in range(len(self.field.get_points())):
+            if i > 0 and i != gamer_index:
+                enemy_index = i
+
+        return enemy_index
+
 
 if __name__ == "__main__":
     f = Field2D((3, 3))
