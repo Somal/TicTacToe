@@ -1,6 +1,29 @@
 from game import *
 
 
+class FieldNode(object):
+    def __init__(self, field, parent=None):
+        self.field = field
+        self.parent = parent
+        self.children = []
+
+    def add_child(self, child):
+        self.children.append(child)
+
+
+class Tree(object):
+    def __init__(self, root_field):
+        self.root = FieldNode(field=root_field)
+
+    def get_root(self):
+        return self.root
+
+    def add_node(self, parent, node_field):
+        node = FieldNode(field=node_field, parent=parent)
+        parent.add_child(node)
+        return node
+
+
 class Line(object):
     def __init__(self, coords_2d, field_2d, weight=1):
         self.coords = coords_2d
@@ -104,7 +127,7 @@ class Agent(object):
         lines.append(line)
         return lines
 
-    def create_move(self, gamer_index, comparison_func):
+    def create_move_locally(self, gamer_index, comparison_func):
         prev_showing = self.game.show_everytime
         self.game.show_everytime = False
 
@@ -137,15 +160,18 @@ class Agent(object):
                 result_point = point
         return max_result, result_point
 
+    def create_move_minimax(self, gamer_index, comparison_func, depth=6):
+        pass
+
 
 if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f)
     agent = Agent(game=g)
     g.put(0, 0, 1)
-    g.put(1, 1, 2)
+    g.put(1, 2, 2)
     g.put(2, 1, 1)
     # g.put(0, 2, 2)
     # for line in agent.linker[(0, 1)]:
     #     print(str(line), line.get_statistics(), line.utility(1))
-    print(agent.create_move(2, agent.default_comparison_vectors_func))
+    print(agent.create_move_locally(2, agent.default_comparison_vectors_func))
