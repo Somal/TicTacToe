@@ -4,7 +4,7 @@ from game import *
 class Line(object):
     def __init__(self, coords_2d, field_2d):
         self.coords = coords_2d
-        self.field = Field2D
+        self.field = field_2d
 
     def get_statistics(self):
         """
@@ -50,7 +50,7 @@ class Agent(object):
                 lines = []
                 for line in self.linker[(i, j)]:
                     lines.append(str(line))
-                print(i, j, lines)
+                    # print(i, j, lines)
 
     def line_coord_generation(self):
         lines = []
@@ -93,3 +93,6 @@ if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f)
     agent = Agent(game=g)
+    g.put(1, 1, 1)
+    for line in agent.linker[(1, 1)]:
+        print(str(line), line.get_statistics())
