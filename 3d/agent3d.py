@@ -31,7 +31,7 @@ class GameNode(object):
         self.children.append(node)
         return node
 
-    def update_utility(self, gamer_index):
+    def update_utility(self):
         agent = Agent3d(self.game)
         U = []
         for line in agent.lines:
@@ -89,9 +89,9 @@ class Agent3d(object):
         self.field = field
         self.linker = {}  # 2d field  {point: list(Line)}
         self.lines = set([])  # Store all distinct lines
-        for i in range(self.field.field.get_size()[0]):
-            for j in range(self.field.field.get_size()[1]):
-                for k in range(self.field.field.get_size()[1]):
+        for i in range(self.field.get_size()[0]):
+            for j in range(self.field.get_size()[1]):
+                for k in range(self.field.get_size()[1]):
                     self.linker[(i, j, k)] = []
 
         self.__init_linker()
@@ -99,17 +99,18 @@ class Agent3d(object):
     def __init_linker(self):
         lines_coord = self.line_coord_generation()
         for line_coord in lines_coord:
-            line = Line(line_coord, field_3d=self.field.field)
+            line = Line(line_coord, field_3d=self.field)
             self.lines.add(line)
             for point in line_coord:
                 self.linker[point].append(line)
 
-        for i in range(self.field.field.get_size()[0]):
-            for j in range(self.field.field.get_size()[1]):
-                lines = []
-                for line in self.linker[(i, j)]:
-                    lines.append(str(line))
-                    # print(i, j, lines)
+        for i in range(self.field.get_size()[0]):
+            for j in range(self.field.get_size()[1]):
+                for k in range(self.field.get_size()[2]):
+                    lines = []
+                    for line in self.linker[(i, j, k)]:
+                        lines.append(line)
+                        # print(i, j, lines)
 
     def line_coord_generation(self):
         lines = []
@@ -143,40 +144,6 @@ class Agent3d(object):
             point = (point[0] + d[0], point[1] + d[1])
         lines.append(line)
         return lines
-
-    # Not use
-    def create_move_locally(self, gamer_index, comparison_func):
-        prev_showing = self.field.show_everytime
-        self.field.show_everytime = False
-
-        utilities = {}
-        for i in range(self.field.field.get_size()[0]):
-            for j in range(self.field.field.get_size()[1]):
-                # Try to put point to somewhere
-                try:
-                    g.put(i, j, gamer_index)
-                    U = []
-                    for line in agent.lines:
-                        u_i = line.utility(gamer_index)
-                        U.append(u_i)
-                    utilities[(i, j)] = U
-                    g.field.move_back((i, j))
-                except:
-                    pass
-
-        self.field.show_everytime = prev_showing
-        result, point = comparison_func(utilities)
-        return result, point
-
-    def default_comparison_vectors_func(self, utilities):
-        max_result = 0
-        result_point = None
-        for point, utility_vector in utilities.items():
-            avg = sum(utility_vector) / len(utility_vector)
-            if avg > max_result:
-                max_result = avg
-                result_point = point
-        return max_result, result_point
 
     def create_move_minimax(self, gamer_index, max_depth=6):
         def go_to_depth(max_depth, root_node, gamer_index, full_root):
@@ -249,7 +216,7 @@ class Agent3d(object):
 
 if __name__ == '__main__':
     f = Field3D((3, 3, 3), show_everytime=False)
-    agent = Agent3d(game=f)
+    agent = Agent3d(field=f)
     t = time.time()
     score, root, moves = agent.create_move_minimax(1, max_depth=5)
 
