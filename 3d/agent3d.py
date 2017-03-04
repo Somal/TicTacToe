@@ -41,9 +41,9 @@ class GameNode(object):
 
 
 class Line(object):
-    def __init__(self, coords_2d, field_2d, weight=1):
-        self.coords = coords_2d
-        self.field = field_2d
+    def __init__(self, coords_3d, field_3d, weight=1):
+        self.coords = coords_3d
+        self.field = field_3d
         self.weight = weight
 
     def get_statistics(self):
@@ -99,7 +99,7 @@ class Agent3d(object):
     def __init_linker(self):
         lines_coord = self.line_coord_generation()
         for line_coord in lines_coord:
-            line = Line(line_coord, field_2d=self.field.field)
+            line = Line(line_coord, field_3d=self.field.field)
             self.lines.add(line)
             for point in line_coord:
                 self.linker[point].append(line)
