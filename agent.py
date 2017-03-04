@@ -181,16 +181,13 @@ class Agent(object):
         def go_to_depth(max_depth, root_node, gamer_index, full_root):
             if max_depth == 0:
                 root_node.update_utility(root_node.game.enemy(gamer_index))
-
-                # root_node.game.field.show()
-                # print(utility_hash(root_node.utility))
-
-                # update_tree_utility(root_node, root)
                 return None
 
+            empty_flag = True
             for i in range(root_node.game.field.get_size()[0]):
                 for j in range(root_node.game.field.get_size()[1]):
                     if root_node.game.field.get((i, j)) == 0:
+                        empty_flag = False
                         node = root_node.add_child(root_node.game.copy())
                         node.game.put(i, j, gamer_index)
 
@@ -198,6 +195,8 @@ class Agent(object):
                         node.last_move = (i, j)
                         go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index),
                                     full_root)  # Change index to enemy
+            if empty_flag:
+                root_node.update_utility(root_node.game.enemy(gamer_index))
 
         def update_tree_utility(node, root):
             def func(x, y):
@@ -214,12 +213,12 @@ class Agent(object):
                 if func(child.utility, node.utility):
                     node.utility = child.utility
                     node.next_move = child.last_move
-                #     if node.move == (0, 0) and node is root:
-                #         child.game.field.show()
-                #         print(child.move)
-                #
-                # if node is root:
-                #     print(node.move)
+                    #     if node.move == (0, 0) and node is root:
+                    #         child.game.field.show()
+                    #         print(child.move)
+                    #
+                    # if node is root:
+                    #     print(node.move)
 
         prev_showing = self.game.show_everytime
         self.game.show_everytime = False
@@ -253,7 +252,7 @@ if __name__ == '__main__':
     # g.put(1, 2, 2)
     g.field.show()
     t = time.time()
-    score, root, moves = agent.create_move_minimax(2, max_depth=2)
+    score, root, moves = agent.create_move_minimax(2, max_depth=10)
 
     # for child in root.children:
     #     child.game.field.show()
