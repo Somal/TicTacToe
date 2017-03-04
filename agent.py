@@ -1,5 +1,6 @@
 from game import *
 import time
+import copy
 
 
 def utility_hash(array):
@@ -70,9 +71,9 @@ class Line(object):
         gamer_move_count = stats[gamer_index]
         enemy_move_count = stats[enemy_index]
         if gamer_move_count == 0 and enemy_move_count > 0:
-            result = -(enemy_move_count / len(self.coords)) ** 2
+            result = -(enemy_move_count / len(self.coords)) ** 1
         if gamer_move_count > 0 and enemy_move_count == 0:
-            result = (gamer_move_count / len(self.coords)) ** 2
+            result = (gamer_move_count / len(self.coords)) ** 1
         return result * self.weight
 
     def show(self):
@@ -206,12 +207,12 @@ class Agent(object):
                 for child in node.children:
                     if child.utility is not None:
                         if node.utility is None:
-                            node.utility = child.utility
-                            node.move = child.move
+                            node.utility = copy.deepcopy(child.utility)
+                            node.move = copy.deepcopy(child.move)
 
                         if func(child.utility, node.utility):
-                            node.utility = child.utility
-                            node.move = child.move
+                            node.utility = copy.deepcopy(child.utility)
+                            node.move = copy.deepcopy(child.move)
 
                 if node.parent is not None:
                     update_parents(node.parent)
@@ -253,5 +254,6 @@ if __name__ == '__main__':
     for child in root.children:
         child.game.field.show()
         print(utility_hash(child.utility))
+    print(root.utility)
     print(score, moves)
-    print(time.time() - t)
+    # print(time.time() - t)
