@@ -173,6 +173,9 @@ class Agent(object):
                     U.append(u_i)
                 root_node.utility = U
 
+                # root_node.game.field.show()
+                # print(utility_hash(U))
+
                 update_parents(root_node)
                 return None
 
@@ -182,10 +185,9 @@ class Agent(object):
                     try:
                         node.game.put(i, j, gamer_index)
 
-                        node.game.field.show()
+                        # node.game.field.show()
                         node.move = (i, j)
                         go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
-                        print(sum(node.utility) / len(node.utility))
                         node = root_node.add_child(root_node.game.copy())
                     except Exception as e:
                         # print(e)
@@ -220,16 +222,25 @@ class Agent(object):
         go_to_depth(max_depth, root, gamer_index)
 
         self.game.show_everytime = prev_showing
-        return utility_hash(root.utility), root.move
+
+        def get_moves(node, prev_moves):
+            move = node.move
+            if node.children.__len__() == 0:
+                return prev_moves
+            for child in node.children:
+                if child.game.field.get(move) != 0:
+                    return get_moves(child, prev_moves + [move])
+
+        return utility_hash(root.utility), get_moves(root, [])
 
 
 if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f, show_everytime=False)
     agent = Agent(game=g)
-    # g.put(2, 2, 1)
-    # g.put(2, 0, 2)
-    # g.put(0, 0, 1)
+    g.put(1, 1, 1)
+    g.put(1, 0, 2)
+    g.put(0, 1, 1)
     # g.put(0, 2, 2)
     g.field.show()
-    print(agent.create_move_minimax(1, max_depth=1))
+    print(agent.create_move_minimax(2, max_depth=1))
