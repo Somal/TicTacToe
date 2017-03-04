@@ -17,7 +17,12 @@ class GameNode(object):
         self.children = []
         self.utility = None
         self.move = None
-        self.depth = 0 if parent is None else parent.depth + 1
+
+        self.depth = 0
+        for i in range(self.game.field.get_size()[0]):
+            for j in range(self.game.field.get_size()[1]):
+                if self.game.field.get((i, j)) != 0:
+                    self.depth += 1
 
     def add_child(self, game):
         node = GameNode(game=game, parent=self)
@@ -176,7 +181,7 @@ class Agent(object):
                 root_node.update_utility(root_node.game.enemy(gamer_index))
 
                 # root_node.game.field.show()
-                # print(utility_hash(U))
+                print(utility_hash(root_node.utility))
 
                 update_parents(root_node)
                 return None
@@ -219,7 +224,7 @@ class Agent(object):
         self.game.show_everytime = False
 
         root = GameNode(self.game.copy())
-        # root.update_utility(root.game.enemy(gamer_index))
+        print(root.depth)
 
         # Go to depth
         go_to_depth(max_depth, root, gamer_index)
@@ -228,13 +233,14 @@ class Agent(object):
 
         def get_moves(node, prev_moves):
             move = node.move
+            print(move, prev_moves)
             if node.children.__len__() == 0:
                 return prev_moves
             for child in node.children:
                 if child.game.field.get(move) != 0:
                     return get_moves(child, prev_moves + [move])
 
-        return utility_hash(root.utility), get_moves(root, [])
+        return utility_hash(root.utility), root.move  # , get_moves(root, [])
 
 
 if __name__ == '__main__':
