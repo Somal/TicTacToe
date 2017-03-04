@@ -250,17 +250,8 @@ if __name__ == '__main__':
     f = Field2D((3, 3))
     g = Game(field=f, show_everytime=False)
     agent = Agent(game=g)
-    g.put(1, 1, 1)
-    g.put(1, 0, 2)
-    g.put(0, 1, 1)
-    # g.put(1, 2, 2)
-    g.field.show()
     t = time.time()
-    score, root, moves = agent.create_move_minimax(2, max_depth=10)
+    score, root, moves = agent.create_move_minimax(1, max_depth=5)
 
-    # for child in root.children:
-    #     child.game.field.show()
-    #     print(utility_hash(child.utility))
-    print(root.utility)
     print(score, moves)
     print(time.time() - t)
