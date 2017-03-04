@@ -176,7 +176,7 @@ class Agent(object):
                         node.game.field.show()
                         node.move = (i, j)
                         go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
-                        print(sum(node.utility)/len(node.utility))
+                        print(sum(node.utility) / len(node.utility))
                         node = root_node.add_child(root_node.game.copy())
                     except Exception as e:
                         # print(e)
@@ -185,8 +185,16 @@ class Agent(object):
         def update_parents(node):
             if node is not None:
                 def func(x, y):
-                    nx = sum(x) / len(x) if max(x) < 1.0 else 1
-                    ny = sum(y) / len(y) if max(y) < 1.0 else 1
+                    def u(array):
+                        result = sum(array) / len(array)
+                        if max(array) >= 1.0:
+                            result = 1
+                        if max(array) <= -1.0:
+                            result = -1
+                        return result
+
+                    nx = u(x)
+                    ny = u(y)
                     return nx > ny if node.depth % 2 == 0 else nx < ny
 
                 for child in node.children:
