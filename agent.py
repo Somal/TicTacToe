@@ -154,7 +154,7 @@ class Agent(object):
         return max_result, result_point
 
     def create_move_minimax(self, gamer_index, max_depth=6):
-        def go_to_depth(max_depth, root_node, gamer_index, current_depth):
+        def go_to_depth(max_depth, root_node, gamer_index):
             if max_depth == 0:
                 game = root_node.game
                 agent = Agent(game)
@@ -168,7 +168,6 @@ class Agent(object):
                 return None
 
             node = root_node.add_child(root_node.game.copy())
-            node.depth = current_depth
             for i in range(root_node.game.field.get_size()[0]):
                 for j in range(root_node.game.field.get_size()[1]):
                     try:
@@ -177,7 +176,7 @@ class Agent(object):
                         node.game.field.show()
                         node.move = (i, j)
                         go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
-                        print(sum(node.utility) / len(node.utility))
+                        print(sum(node.utility)/len(node.utility))
                         node = root_node.add_child(root_node.game.copy())
                     except Exception as e:
                         # print(e)
@@ -209,7 +208,7 @@ class Agent(object):
         root = GameNode(self.game.copy())
 
         # Go to depth
-        go_to_depth(max_depth, root, gamer_index, 0)
+        go_to_depth(max_depth, root, gamer_index)
 
         self.game.show_everytime = prev_showing
         return root.utility, root.move
