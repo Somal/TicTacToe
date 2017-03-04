@@ -185,7 +185,7 @@ class Agent(object):
         def update_parents(node):
             if node is not None:
                 def func(x, y):
-                    def u(array):
+                    def utility_hash(array):
                         result = sum(array) / len(array)
                         if max(array) >= 1.0:
                             result = 1
@@ -193,8 +193,8 @@ class Agent(object):
                             result = -1
                         return result
 
-                    nx = u(x)
-                    ny = u(y)
+                    nx = utility_hash(x)
+                    ny = utility_hash(y)
                     return nx > ny if node.depth % 2 == 0 else nx < ny
 
                 for child in node.children:
