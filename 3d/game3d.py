@@ -55,46 +55,6 @@ class Field3D(object):
         i, j, k = point
         return i >= 0 and j >= 0 and k >= 0 and i < self.size[0] and j < self.size[1] and k < self.size[2]
 
-    def check_field(self):
-        """
-        Not WORKS!!
-        :return:
-        """
-        # TODO: Change criterion of win (not sum)!!
-        for i in range(self.get_size()[0]):
-            points_sum = sum(self.field[i])
-            if points_sum == (points_sum // self.get_size()[0]) * self.get_size()[0] and points_sum > 0:
-                return True
-
-        for j in range(self.get_size()[1]):
-            points_sum = sum([self.field[i][j] for i in range(self.get_size()[0])])
-            if points_sum == (points_sum // self.get_size()[1]) * self.get_size()[1] and points_sum > 0:
-                return True
-
-        # Diagonal checking 1
-        d = (1, 1)
-        point = (0, 0)
-        points_sum = 0
-        while self.checking_edges(point):
-            points_sum += self.get(point)
-            point = (point[0] + d[0], point[1] + d[1])
-
-        if points_sum == (points_sum // self.get_size()[1]) * self.get_size()[1] and points_sum > 0:
-            return True
-
-        # Diagonal checking 2
-        d = (-1, 1)
-        point = (self.get_size()[0] - 1, 0)
-        points_sum = 0
-        while self.checking_edges(point):
-            points_sum += self.get(point)
-            point = (point[0] + d[0], point[1] + d[1])
-
-        if points_sum == (points_sum // self.get_size()[1]) * self.get_size()[1] and points_sum > 0:
-            return True
-
-        return False
-
     def move_back(self, point):
         i, j, k = point
         self.field[i][j][k] = 0
