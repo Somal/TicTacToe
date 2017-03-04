@@ -24,6 +24,14 @@ class GameNode(object):
         self.children.append(node)
         return node
 
+    def update_utility(self, gamer_index):
+        agent = Agent(self.game)
+        U = []
+        for line in agent.lines:
+            u_i = line.utility(gamer_index)
+            U.append(u_i)
+        self.utility = U
+
 
 class Line(object):
     def __init__(self, coords_2d, field_2d, weight=1):
@@ -165,13 +173,7 @@ class Agent(object):
     def create_move_minimax(self, gamer_index, max_depth=6):
         def go_to_depth(max_depth, root_node, gamer_index):
             if max_depth == 0:
-                game = root_node.game
-                agent = Agent(game)
-                U = []
-                for line in agent.lines:
-                    u_i = line.utility(game.enemy(gamer_index))
-                    U.append(u_i)
-                root_node.utility = U
+                root_node.update_utility(root_node.game.enemy(gamer_index))
 
                 # root_node.game.field.show()
                 # print(utility_hash(U))
@@ -217,6 +219,7 @@ class Agent(object):
         self.game.show_everytime = False
 
         root = GameNode(self.game.copy())
+        # root.update_utility(root.game.enemy(gamer_index))
 
         # Go to depth
         go_to_depth(max_depth, root, gamer_index)
