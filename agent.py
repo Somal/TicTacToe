@@ -1,6 +1,15 @@
 from game import *
 
 
+def utility_hash(array):
+    result = sum(array) / len(array)
+    if max(array) >= 1.0:
+        result = 1
+    if max(array) <= -1.0:
+        result = -1
+    return result
+
+
 class GameNode(object):
     def __init__(self, game, parent=None):
         self.game = game
@@ -185,14 +194,6 @@ class Agent(object):
         def update_parents(node):
             if node is not None:
                 def func(x, y):
-                    def utility_hash(array):
-                        result = sum(array) / len(array)
-                        if max(array) >= 1.0:
-                            result = 1
-                        if max(array) <= -1.0:
-                            result = -1
-                        return result
-
                     nx = utility_hash(x)
                     ny = utility_hash(y)
                     return nx > ny if node.depth % 2 == 0 else nx < ny
@@ -219,7 +220,7 @@ class Agent(object):
         go_to_depth(max_depth, root, gamer_index)
 
         self.game.show_everytime = prev_showing
-        return root.utility, root.move
+        return utility_hash(root.utility), root.move
 
 
 if __name__ == '__main__':
@@ -231,4 +232,4 @@ if __name__ == '__main__':
     # g.put(0, 0, 1)
     # g.put(0, 2, 2)
     g.field.show()
-    print(agent.create_move_minimax(1, max_depth=3))
+    print(agent.create_move_minimax(1, max_depth=1))
