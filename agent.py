@@ -188,16 +188,13 @@ class Agent(object):
 
             for i in range(root_node.game.field.get_size()[0]):
                 for j in range(root_node.game.field.get_size()[1]):
-                    try:
+                    if root_node.game.field.get((i, j)) == 0:
                         node = root_node.add_child(root_node.game.copy())
                         node.game.put(i, j, gamer_index)
 
                         # node.game.field.show()
                         node.move = (i, j)
                         go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
-                    except Exception as e:
-                        # print(e)
-                        pass
 
         def update_parents(node):
             if node is not None:
