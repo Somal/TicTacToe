@@ -1,4 +1,5 @@
 from game import *
+import time
 
 
 def utility_hash(array):
@@ -66,9 +67,9 @@ class Line(object):
         gamer_move_count = stats[gamer_index]
         enemy_move_count = stats[enemy_index]
         if gamer_move_count == 0 and enemy_move_count > 0:
-            result = -enemy_move_count / len(self.coords)
+            result = -(enemy_move_count / len(self.coords))**2
         if gamer_move_count > 0 and enemy_move_count == 0:
-            result = gamer_move_count / len(self.coords)
+            result = (gamer_move_count / len(self.coords))**2
         return result * self.weight
 
     def show(self):
@@ -176,8 +177,8 @@ class Agent(object):
             if max_depth == 0:
                 root_node.update_utility(root_node.game.enemy(gamer_index))
 
-                root_node.game.field.show()
-                print(utility_hash(root_node.utility))
+                # root_node.game.field.show()
+                # print(utility_hash(root_node.utility))
 
                 update_parents(root_node)
                 return None
@@ -247,4 +248,6 @@ if __name__ == '__main__':
     g.put(0, 1, 1)
     # g.put(1, 2, 2)
     g.field.show()
-    print(agent.create_move_minimax(2, max_depth=1))
+    t = time.time()
+    print(agent.create_move_minimax(2, max_depth=))
+    print(time.time() - t)
