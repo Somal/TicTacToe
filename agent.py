@@ -3,11 +3,14 @@ import time
 
 
 def utility_hash(array):
-    result = sum(array) / len(array)
-    if max(array) >= 1.0:
-        result = 1
-    if max(array) <= -1.0:
-        result = -1
+    if array is None:
+        result = None
+    else:
+        result = sum(array) / len(array)
+        if max(array) >= 1.0:
+            result = 1
+        if max(array) <= -1.0:
+            result = -1
     return result
 
 
@@ -67,9 +70,9 @@ class Line(object):
         gamer_move_count = stats[gamer_index]
         enemy_move_count = stats[enemy_index]
         if gamer_move_count == 0 and enemy_move_count > 0:
-            result = -(enemy_move_count / len(self.coords))**2
+            result = -(enemy_move_count / len(self.coords)) ** 2
         if gamer_move_count > 0 and enemy_move_count == 0:
-            result = (gamer_move_count / len(self.coords))**2
+            result = (gamer_move_count / len(self.coords)) ** 2
         return result * self.weight
 
     def show(self):
@@ -183,16 +186,15 @@ class Agent(object):
                 update_parents(root_node)
                 return None
 
-            node = root_node.add_child(root_node.game.copy())
             for i in range(root_node.game.field.get_size()[0]):
                 for j in range(root_node.game.field.get_size()[1]):
                     try:
+                        node = root_node.add_child(root_node.game.copy())
                         node.game.put(i, j, gamer_index)
 
                         # node.game.field.show()
                         node.move = (i, j)
                         go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
-                        node = root_node.add_child(root_node.game.copy())
                     except Exception as e:
                         # print(e)
                         pass
@@ -236,7 +238,7 @@ class Agent(object):
                 if child.game.field.get(move) != 0:
                     return get_moves(child, prev_moves + [move])
 
-        return utility_hash(root.utility), root.move, get_moves(root, [])
+        return utility_hash(root.utility), root, get_moves(root, [])
 
 
 if __name__ == '__main__':
@@ -249,5 +251,10 @@ if __name__ == '__main__':
     # g.put(1, 2, 2)
     g.field.show()
     t = time.time()
-    print(agent.create_move_minimax(2, max_depth=))
+    score, root, moves = agent.create_move_minimax(2, max_depth=2)
+
+    for child in root.children:
+        child.game.field.show()
+        print(utility_hash(child.utility))
+    print(score, moves)
     print(time.time() - t)
