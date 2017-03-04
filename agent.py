@@ -179,10 +179,14 @@ class Agent(object):
 
     def create_move_minimax(self, gamer_index, max_depth=6):
         def go_to_depth(max_depth, root_node, gamer_index, full_root):
+            root_node.update_utility(root_node.game.enemy(gamer_index))
             if max_depth == 0:
-                root_node.update_utility(root_node.game.enemy(gamer_index))
                 return None
 
+            if utility_hash(root_node.utility) == 1.0 or utility_hash(root_node.utility) == -1.0:
+                return None
+
+            root_node.utility = None
             empty_flag = True
             for i in range(root_node.game.field.get_size()[0]):
                 for j in range(root_node.game.field.get_size()[1]):
@@ -259,4 +263,4 @@ if __name__ == '__main__':
     #     print(utility_hash(child.utility))
     print(root.utility)
     print(score, moves)
-    # print(time.time() - t)
+    print(time.time() - t)
