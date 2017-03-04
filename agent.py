@@ -21,7 +21,8 @@ class GameNode(object):
         self.parent = parent
         self.children = []
         self.utility = None
-        self.move = None
+        self.next_move = None
+        self.last_move = None
 
         self.gamer_index = gamer_index  # who will create mode
 
@@ -177,14 +178,14 @@ class Agent(object):
         return max_result, result_point
 
     def create_move_minimax(self, gamer_index, max_depth=6):
-        def go_to_depth(max_depth, root_node, gamer_index):
+        def go_to_depth(max_depth, root_node, gamer_index, full_root):
             if max_depth == 0:
                 root_node.update_utility(root_node.game.enemy(gamer_index))
 
                 # root_node.game.field.show()
                 # print(utility_hash(root_node.utility))
 
-                update_parents(root_node)
+                # update_tree_utility(root_node, root)
                 return None
 
             for i in range(root_node.game.field.get_size()[0]):
@@ -194,28 +195,31 @@ class Agent(object):
                         node.game.put(i, j, gamer_index)
 
                         # node.game.field.show()
-                        node.move = (i, j)
-                        go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index))  # Change index to enemy
+                        node.last_move = (i, j)
+                        go_to_depth(max_depth - 1, node, node.game.enemy(gamer_index),
+                                    full_root)  # Change index to enemy
 
-        def update_parents(node):
-            if node is not None:
-                def func(x, y):
-                    nx = utility_hash(x)
-                    ny = utility_hash(y)
-                    return nx > ny if node.gamer_index == 1 else nx < ny
+        def update_tree_utility(node, root):
+            def func(x, y):
+                nx = utility_hash(x)
+                ny = utility_hash(y)
+                return nx > ny if node.gamer_index == 1 else nx < ny
 
-                for child in node.children:
-                    if child.utility is not None:
-                        if node.utility is None:
-                            node.utility = copy.deepcopy(child.utility)
-                            node.move = copy.deepcopy(child.move)
+            for child in node.children:
+                update_tree_utility(child, root)
+                if node.utility is None:
+                    node.utility = child.utility
+                    node.next_move = child.last_move
 
-                        if func(child.utility, node.utility):
-                            node.utility = copy.deepcopy(child.utility)
-                            node.move = copy.deepcopy(child.move)
-
-                if node.parent is not None:
-                    update_parents(node.parent)
+                if func(child.utility, node.utility):
+                    node.utility = child.utility
+                    node.next_move = child.last_move
+                #     if node.move == (0, 0) and node is root:
+                #         child.game.field.show()
+                #         print(child.move)
+                #
+                # if node is root:
+                #     print(node.move)
 
         prev_showing = self.game.show_everytime
         self.game.show_everytime = False
@@ -223,12 +227,12 @@ class Agent(object):
         root = GameNode(self.game.copy(), gamer_index)
 
         # Go to depth
-        go_to_depth(max_depth, root, gamer_index)
-
+        go_to_depth(max_depth, root, gamer_index, root)
+        update_tree_utility(root, root)
         self.game.show_everytime = prev_showing
 
         def get_moves(node, prev_moves):
-            move = node.move
+            move = node.next_move
             # print(move, prev_moves)
             if node.children.__len__() == 0:
                 return prev_moves
@@ -251,9 +255,9 @@ if __name__ == '__main__':
     t = time.time()
     score, root, moves = agent.create_move_minimax(2, max_depth=2)
 
-    for child in root.children:
-        child.game.field.show()
-        print(utility_hash(child.utility))
+    # for child in root.children:
+    #     child.game.field.show()
+    #     print(utility_hash(child.utility))
     print(root.utility)
     print(score, moves)
     # print(time.time() - t)
