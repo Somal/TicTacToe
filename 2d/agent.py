@@ -1,6 +1,6 @@
-from game import *
 import time
-import copy
+
+from .game import *
 
 
 def utility_hash(array):
