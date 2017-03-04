@@ -113,37 +113,7 @@ class Agent3d(object):
                         # print(i, j, lines)
 
     def line_coord_generation(self):
-        lines = []
-        for i in range(self.field.field.get_size()[0]):
-            line = []
-            for j in range(self.field.field.get_size()[1]):
-                line.append((i, j))
-            lines.append(line)
-
-        for j in range(self.field.field.get_size()[1]):
-            line = []
-            for i in range(self.field.field.get_size()[0]):
-                line.append((i, j))
-            lines.append(line)
-
-        # Diagonal checking 1
-        d = (1, 1)
-        point = (0, 0)
-        line = []
-        while self.field.field.checking_edges(point):
-            line.append(point)
-            point = (point[0] + d[0], point[1] + d[1])
-        lines.append(line)
-
-        # Diagonal checking 2
-        d = (-1, 1)
-        point = (self.field.field.get_size()[0] - 1, 0)
-        line = []
-        while self.field.field.checking_edges(point):
-            line.append(point)
-            point = (point[0] + d[0], point[1] + d[1])
-        lines.append(line)
-        return lines
+        pass
 
     def create_move_minimax(self, gamer_index, max_depth=6):
         def go_to_depth(max_depth, root_node, gamer_index, full_root):
@@ -217,8 +187,8 @@ class Agent3d(object):
 if __name__ == '__main__':
     f = Field3D((3, 3, 3), show_everytime=False)
     agent = Agent3d(field=f)
-    t = time.time()
-    score, root, moves = agent.create_move_minimax(1, max_depth=5)
-
-    print(score, moves)
-    print(time.time() - t)
+    f.show()
+    # t = time.time()
+    # score, root, moves = agent.create_move_minimax(1, max_depth=5)
+#     print(score, moves)
+#     print(time.time() - t)
