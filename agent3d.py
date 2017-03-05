@@ -3,20 +3,17 @@ import time
 from game3d import *
 import queue
 
-TIME_LIMIT = 9
+TIME_LIMIT = 10
 MAX_DEPTH = 0
 NODES_QUEUE = queue.Queue()
 
 
 def utility_hash(array):
-    if array is None:
-        result = None
-    else:
-        result = sum(array) / len(array)
-        if max(array) >= 1.0:
-            result = 1
-        if max(array) <= -1.0:
-            result = -1
+    result = sum(array) / len(array)
+    if max(array) >= 1.0:
+        result = 1
+    if max(array) <= -1.0:
+        result = -1
     return result
 
 
@@ -30,6 +27,14 @@ class FieldNode(object):
         self.last_move = None
 
         self.gamer_index = gamer_index  # who will create mode
+
+    def update_depth(self):
+        self.depth = 0
+        for i in range(self.field.get_size()[0]):
+            for j in range(self.field.get_size()[1]):
+                for k in range(self.field.get_size()[2]):
+                    if self.field.get((i, j, k)) != 0:
+                        self.depth += 1
 
     def add_child(self, field):
         node = FieldNode(field=field, gamer_index=field.enemy(self.gamer_index), parent=self)
@@ -207,10 +212,11 @@ class Agent3d(object):
         return lines
 
     def create_move_minimax(self, gamer_index, start_time, max_depth=6):
-        def go_to_depth(max_depth, root_node, gamer_index):
+        def go_to_depth():
+            global MAX_DEPTH
+            root_node = NODES_QUEUE.get()
+            MAX_DEPTH = max(MAX_DEPTH, root_node.depth)
             root_node.update_utility()
-            if max_depth == 0:
-                return None
 
             if utility_hash(root_node.utility) == 1.0 or utility_hash(root_node.utility) == -1.0:
                 return None
@@ -227,18 +233,25 @@ class Agent3d(object):
 
                             # node.game.field.show()
                             node.last_move = (i, j, k)
-                            go_to_depth(max_depth - 1, node, node.field.enemy(gamer_index))  # Change index to enemy
+                            node.gamer_index = node.field.enemy(gamer_index)
+                            node.update_depth()
+                            NODES_QUEUE.put(node)
+
             if empty_flag:
                 root_node.update_utility(root_node.game.enemy(gamer_index))
 
-        def update_tree_utility(node):
+        def update_tree_utility(node, max_depth):
             def func(x, y):
                 nx = utility_hash(x)
                 ny = utility_hash(y)
                 return nx > ny if node.gamer_index == 1 else nx < ny
 
+            if node.depth == max_depth:
+                node.update_utility()
+                return None
+
             for child in node.children:
-                update_tree_utility(child)
+                update_tree_utility(child, max_depth)
                 if node.utility is None:
                     node.utility = child.utility
                     node.next_move = child.last_move
@@ -258,16 +271,22 @@ class Agent3d(object):
 
         copy_field = self.field.copy()
         root = FieldNode(copy_field, gamer_index)
+        root.update_depth()
+        NODES_QUEUE.put(root)
 
-        # Go to depth
-        go_to_depth(max_depth, root, gamer_index)
-        update_tree_utility(root)
+        while time.time() - start_time < 0.95*TIME_LIMIT:
+            # print(time.time()-start_time)
+            # Go to depth
+            go_to_depth()
+
+        print(MAX_DEPTH)
+        update_tree_utility(root, MAX_DEPTH - 1)
         self.field.show_everytime = prev_showing
 
         def get_moves(node, prev_moves):
             move = node.next_move
             # print(move, prev_moves)
-            if node.children.__len__() == 0:
+            if node.children.__len__() == 0 or node.depth == MAX_DEPTH - 1:
                 return prev_moves
             for child in node.children:
                 if child.field.get(move) != 0:
